@@ -5,6 +5,7 @@ fun main() {
 fun runSimulation() {
     val greetingFunction = configureGreetingFunction()
     println(greetingFunction("Ivan"))
+    println(greetingFunction("Ivan"))
 }
 
 fun configureGreetingFunction(): (String) -> String {
