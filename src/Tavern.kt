@@ -17,9 +17,9 @@ fun placeOrder(menuData: String) {
     println("Madrigal exclaims: ${toDragonSpeak(phrase)}")
 }
 
-private fun toDragonSpeak(phrase: String){
-    phrase.replace(Regex("[aeiou]")){
-        when(it.value){
+private fun toDragonSpeak(phrase: String) =
+    phrase.replace(Regex("[aeiou]")) {
+        when (it.value) {
             "a" -> "4"
             "e" -> "3"
             "i" -> "1"
@@ -28,5 +28,4 @@ private fun toDragonSpeak(phrase: String){
             else -> it.value
         }
     }
-}
 
