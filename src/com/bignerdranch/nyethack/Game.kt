@@ -10,6 +10,10 @@ fun main() {
         isImmortal = false)
     player.castFireball(9)
 
+    var currentRoom = TownSquare()
+    println(currentRoom.description())
+    println(currentRoom.load())
+
     printPlayerStatus(player)
 }
 
