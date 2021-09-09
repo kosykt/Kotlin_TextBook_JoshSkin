@@ -23,13 +23,13 @@ class Player (_name: String,
               val isBlessed: Boolean,
               private val isImmortal: Boolean){
 
-    val hometown = selectHometown()
-
     var name = _name
         get() = "${field.lowercase()} of $hometown"
         private set(value) {
             field = value.trim()
         }
+
+    val hometown by lazy {selectHometown()}
 
     init {
         require(healthPoints > 0) { "healthPoints must be greater than zero." }
