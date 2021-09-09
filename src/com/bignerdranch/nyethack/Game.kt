@@ -1,8 +1,13 @@
 package com.bignerdranch.nyethack
 
+import java.io.File
+
 fun main() {
 
-    val player = Player()
+    val player = Player(_name = "Madrigal",
+        healthPoints = 100,
+        isBlessed = true,
+        isImmortal = false)
     player.castFireball(9)
 
     printPlayerStatus(player)
@@ -13,16 +18,28 @@ private fun printPlayerStatus(player: Player) {
     println("${player.name} ${player.formatHealthStatus()}")
 }
 
-class Player{
-    var name = "John"
-        get() = field.lowercase()
-        private set(value){
+class Player (_name: String,
+              var healthPoints: Int = 100,
+              val isBlessed: Boolean,
+              private val isImmortal: Boolean){
+
+    val hometown = selectHometown()
+
+    var name = _name
+        get() = "${field.lowercase()} of $hometown"
+        private set(value) {
             field = value.trim()
         }
 
-    var healthPoints = 89
-    val isBlessed = true
-    private val isImmortal = false
+    init {
+        require(healthPoints > 0) { "healthPoints must be greater than zero." }
+        require(name.isNotBlank()) { "Player must have a name." }
+    }
+
+    constructor(name: String) : this(name,
+        isBlessed = true,
+        isImmortal = false) {
+        if (name.lowercase() == "kar") healthPoints = 40}
 
     fun auraColor(): String {
         val auraVisible = isBlessed && healthPoints > 50 || isImmortal
@@ -43,4 +60,10 @@ class Player{
 
     fun castFireball(numFireballs: Int = 2) =
         println("A glass of Fireball springs into existence. (x$numFireballs)")
+
+    private fun selectHometown() = File("data/towns.txt")
+        .readText()
+        .split("\n")
+        .shuffled()
+        .first()
 }

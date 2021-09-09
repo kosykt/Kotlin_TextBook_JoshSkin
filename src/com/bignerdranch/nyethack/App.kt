@@ -1,3 +1,5 @@
+package com.bignerdranch.nyethack
+
 fun main() {
     runSimulation()
 }

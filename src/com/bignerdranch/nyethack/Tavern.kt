@@ -1,4 +1,4 @@
-
+package com.bignerdranch.nyethack
 import java.io.File
 
 const val TAVERN_NAME = "Taernyl's Folly"
@@ -24,7 +24,8 @@ fun main() {
 
     var orderCount = 0
     while (orderCount <= 9) {
-        placeOrder(uniquePatrons.shuffled().first(),
+        placeOrder(
+            uniquePatrons.shuffled().first(),
             menuList.shuffled().first())
         orderCount++
     }
