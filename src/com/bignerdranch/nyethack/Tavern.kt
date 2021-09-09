@@ -1,4 +1,4 @@
-package com.bignerdranch.nyethack
+
 import java.io.File
 
 const val TAVERN_NAME = "Taernyl's Folly"
