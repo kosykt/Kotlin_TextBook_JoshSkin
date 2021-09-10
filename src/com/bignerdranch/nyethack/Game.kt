@@ -1,6 +1,7 @@
 package com.bignerdranch.nyethack
 
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main() {
     Game.play()
@@ -12,7 +13,8 @@ object Game {
 
     private var worldMap = listOf(
         listOf(currentRoom, Room("Tavern"), Room("Back Room")),
-        listOf(Room("Long Corridor"), Room("Generic Room")))
+        listOf(Room("Long Corridor"), Room("Generic Room"))
+    )
 
     init {
         println("Welcome, adventurer.")
@@ -36,19 +38,6 @@ object Game {
         println("${player.name} ${player.formatHealthStatus()}")
     }
 
-    private class GameInput(arg: String?) {
-        private val input = arg ?: ""
-        val command = input.split(" ")[0]
-        val argument = input.split(" ").getOrElse(1, { "" })
-
-        fun processCommand() = when (command.lowercase()) {
-            "move" -> move(argument)
-            else -> commandNotFound()
-        }
-
-        private fun commandNotFound() = "I'm not quite sure what you're trying to do!"
-    }
-
     private fun move(directionInput: String) =
         try {
             val direction = Direction.valueOf(directionInput.uppercase())
@@ -63,14 +52,62 @@ object Game {
         } catch (e: Exception) {
             "Invalid direction: $directionInput."
         }
+
+    private fun fight() = currentRoom.monster?.let {
+        while (player.healthPoints > 0 && it.healthPoints > 0) {
+            slay(it)
+            Thread.sleep(1000)
+        }
+        "Combat complete."
+    } ?: "There's nothing here to fight."
+
+    private fun slay(monster: Monster) {
+        println("${monster.name} did ${monster.attack(player)} damage!")
+        println("${player.name} did ${player.attack(monster)} damage!")
+        if (player.healthPoints <= 0) {
+            println(">>>> You have been defeated! Thanks for playing. <<<<")
+            exitProcess(0)
+        }
+        if (monster.healthPoints <= 0) {
+            println(">>>> ${monster.name} has been defeated! <<<<")
+            currentRoom.monster = null
+        }
+    }
+
+    private class GameInput(arg: String?) {
+        private val input = arg ?: ""
+        val command = input.split(" ")[0]
+        val argument = input.split(" ").getOrElse(1, { "" })
+
+        fun processCommand() = when (command.lowercase()) {
+            "fight" -> fight()
+            "move" -> move(argument)
+            else -> commandNotFound()
+        }
+
+        private fun commandNotFound() = "I'm not quite sure what you're trying to do!"
+    }
 }
 
 class Player(
     _name: String,
-    var healthPoints: Int = 100,
+    override var healthPoints: Int = 100,
     val isBlessed: Boolean,
     private val isImmortal: Boolean
-) {
+) : Fightable {
+
+    override val diceCount: Int = 3
+    override val diceSides: Int = 6
+
+    override fun attack(opponent: Fightable): Int {
+        val damageDealt = if (isBlessed) {
+            damageRoll * 2
+        } else {
+            damageRoll
+        }
+        opponent.healthPoints -= damageDealt
+        return damageDealt
+    }
 
     var name = _name
         get() = "${field.lowercase()} of $hometown"
